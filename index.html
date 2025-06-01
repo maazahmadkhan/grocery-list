@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grocery List</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50"/>
+</head>
+<body>
+  <div class="container">
+    <h1>Grocery List</h1>
+    <form id="grocery-form">
+      <input type="text" id="item-input" placeholder="Add grocery item..." required />
+      <button type="submit">Add</button>
+    </form>
+    <ul id="grocery-list"></ul>
+  </div>
+  <dialog id="confirm-dialog">
+    <form method="dialog">
+      <p id="dialog-title"></p>
+      <menu>
+        <button value="cancel" class="cancel-btn">Cancel</button>
+        <button value="confirm" class="confirm-btn">Delete</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="script.js"></script>
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
