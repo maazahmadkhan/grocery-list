@@ -1,5 +1,4 @@
-// App.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -11,15 +10,15 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-  StyleSheet
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+  StyleSheet,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const STORAGE_KEY = 'groceryList';
+const STORAGE_KEY = "groceryList";
 
 export default function App() {
   const [items, setItems] = useState([]);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -27,7 +26,7 @@ export default function App() {
         const saved = await AsyncStorage.getItem(STORAGE_KEY);
         if (saved) setItems(JSON.parse(saved));
       } catch (e) {
-        console.error('Loading error', e);
+        console.error("Loading error", e);
       }
     })();
   }, []);
@@ -36,7 +35,7 @@ export default function App() {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newList));
     } catch (e) {
-      console.error('Saving error', e);
+      console.error("Saving error", e);
     }
   };
 
@@ -46,25 +45,25 @@ export default function App() {
     const newList = [...items, newItem];
     setItems(newList);
     save(newList);
-    setText('');
+    setText("");
     Keyboard.dismiss();
   };
 
   const confirmDelete = (item) => {
     Alert.alert(
-      'Delete Item',
+      "Delete Item",
       `Are you sure you want to delete "${item.name}"?`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Delete',
-          style: 'destructive',
+          text: "Delete",
+          style: "destructive",
           onPress: () => {
-            const newList = items.filter(i => i.id !== item.id);
+            const newList = items.filter((i) => i.id !== item.id);
             setItems(newList);
             save(newList);
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -83,17 +82,12 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
-        <FlatList
-          data={items}
-          keyExtractor={i => i.id}
-          renderItem={renderItem}
-          contentContainerStyle={styles.listContainer}
-        />
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.inputRow}
-        >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={styles.keyboardAvoidingView}
+      >
+        {/* Fixed input at the top */}
+        <View style={styles.inputRow}>
           <TextInput
             style={styles.input}
             placeholder="Enter item"
@@ -105,8 +99,18 @@ export default function App() {
           <TouchableOpacity style={styles.addBtn} onPress={addItem}>
             <Text style={styles.addText}>Add</Text>
           </TouchableOpacity>
-        </KeyboardAvoidingView>
-      </View>
+        </View>
+
+        {/* Scrollable list */}
+        <FlatList
+          data={items}
+          keyExtractor={(i) => i.id}
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContainer}
+          keyboardShouldPersistTaps="handled"
+          style={styles.list}
+        />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -114,61 +118,67 @@ export default function App() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    paddingTop: Platform.OS === 'android' ? 25 : 0, // extra top padding for Android status bar
-    backgroundColor: '#fff',
+    paddingTop: Platform.OS === "android" ? 25 : 0,
+    backgroundColor: "#fff",
   },
-  container: {
+  keyboardAvoidingView: {
     flex: 1,
-    padding: 16,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: "#ccc",
+    backgroundColor: "#fff",
+    zIndex: 1,
+  },
+  input: {
+    flex: 1,
+    height: 44,
+    borderWidth: 1,
+    borderColor: "#888",
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    marginRight: 10,
+  },
+  addBtn: {
+    backgroundColor: "#28a745",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 6,
+  },
+  addText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  list: {
+    flex: 1,
   },
   listContainer: {
     paddingBottom: 20,
+    paddingHorizontal: 16,
   },
   itemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 12,
     marginVertical: 4,
-    backgroundColor: '#eef',
+    backgroundColor: "#eef",
     borderRadius: 6,
   },
   itemText: {
     fontSize: 16,
   },
   deleteBtn: {
-    backgroundColor: '#f55',
+    backgroundColor: "#f55",
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 4,
   },
   deleteText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-  },
-  input: {
-    flex: 1,
-    height: 44,
-    borderWidth: 1,
-    borderColor: '#888',
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    marginRight: 10,
-  },
-  addBtn: {
-    backgroundColor: '#28a745',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 6,
-  },
-  addText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
 });
